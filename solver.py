@@ -39,7 +39,8 @@ def parse_input(folder_name):
         line = line[1: -2]
         curr_constraint = [num.replace("'", "") for num in line.split(", ")]
         constraints.append(curr_constraint)
-
+        if(true):
+            print("")
     return graph, num_buses, size_bus, constraints
 
 
