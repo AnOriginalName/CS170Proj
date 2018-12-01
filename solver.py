@@ -1,5 +1,6 @@
 import networkx as nx
 import os
+from networkx.algorithms.connectivity import minimum_st_edge_cut
 
 ###########################################
 # Change this variable to the path to 
@@ -41,18 +42,29 @@ def parse_input(folder_name):
         constraints.append(curr_constraint)
         return graph, num_buses, size_bus, constraints
 
+def weight_graph(graph):
+    WGraph = nx.Graph()
+    WGraph.add_nodes_from(graph.nodes)
+    for edge in graph.edges:
+        WGraph.add_edge(edge[0],edge[1],capacity=1)
+    return WGraph
 
 def get_min_cuts(graph,rowdy_list):
     for rowdys in rowdy_list:
         s = rowdys[0]
         t = rowdys[1]
-        graph = nx.intersection(graph,nx.minimum_cut(graph,s,t),'capacity',)
+        min_cut = nx.Graph()
+        min_cut.add_nodes_from(graph.nodes)
+        min_cut.add_edges_from(minimum_st_edge_cut(graph,s,t))
+        
+        graph = nx.intersection(graph,min_cut)
     return graph
 
 
 def solve(graph, num_buses, size_bus, constraints):
     #TODO: Write this method as you like. We'd recommend changing the arguments here as well
-    return get_min_cuts(graph,constraints)
+    graph = weight_graph(graph)
+    return str(get_min_cuts(graph,constraints).edges)
 
 def main():
     '''
