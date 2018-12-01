@@ -6,7 +6,7 @@ import os
 # the folder containing all three input
 # size category folders
 ###########################################
-path_to_inputs = "./all_inputs"
+path_to_inputs = "./inputs"
 
 ###########################################
 # Change this variable if you want
@@ -39,33 +39,20 @@ def parse_input(folder_name):
         line = line[1: -2]
         curr_constraint = [num.replace("'", "") for num in line.split(", ")]
         constraints.append(curr_constraint)
-        if(true):
-            print("")
-    return graph, num_buses, size_bus, constraints
+        return graph, num_buses, size_bus, constraints
 
 
-def fix_collision(constraints, numFriendsDic, busDictionary):
-
-	for constraint in constraints:
-		enforced = False
-		curBus = busDictionary[constraints[0]]
-		for person in constraint:
-			if busDictionary[person] is not curBus:
-				enforced = True
-				break
-		if not enforced:
-
-
-def fix_constraint(constraint
-				   , )
+def get_min_cuts(graph,rowdy_list):
+    for rowdys in rowdy_list:
+        s = rowdys[0]
+        t = rowdys[1]
+        graph = nx.intersection(graph,nx.minimum_cut(graph,s,t),'capacity',)
+    return graph
 
 
 def solve(graph, num_buses, size_bus, constraints):
     #TODO: Write this method as you like. We'd recommend changing the arguments here as well
-	buses = []
-	for _ in range(num_buses):
-		buses.append([])
-
+    return get_min_cuts(graph,constraints)
 
 def main():
     '''
@@ -87,7 +74,8 @@ def main():
             os.mkdir(output_category_path)
 
         for input_folder in os.listdir(category_dir):
-            input_name = os.fsdecode(input_folder) 
+            input_name = "" #os.fsdecode(input_folder)
+            print(input_name)
             graph, num_buses, size_bus, constraints = parse_input(category_path + "/" + input_name)
             solution = solve(graph, num_buses, size_bus, constraints)
             output_file = open(output_category_path + "/" + input_name + ".out", "w")
