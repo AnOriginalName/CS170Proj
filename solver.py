@@ -1,5 +1,6 @@
 import networkx as nx
 import os
+import random
 from networkx.algorithms.connectivity import minimum_st_edge_cut
 
 ###########################################
@@ -57,7 +58,7 @@ def get_min_cuts(graph,rowdy_list):
         min_cut.add_nodes_from(graph.nodes)
         min_cut.add_edges_from(minimum_st_edge_cut(graph,s,t))
         
-        graph = nx.intersection(graph,min_cut)
+        graph.remove_edges_from(min_cut.edges)
     return graph
 
 
@@ -86,8 +87,11 @@ def main():
             os.mkdir(output_category_path)
 
         for input_folder in os.listdir(category_dir):
-            input_name = "" #os.fsdecode(input_folder)
+            input_name = os.fsdecode(input_folder)
+            if input_name == ".DS_Store" or input_name == "parameters.txt" or input_name == "graph.gml":
+                continue
             print(input_name)
+            
             graph, num_buses, size_bus, constraints = parse_input(category_path + "/" + input_name)
             solution = solve(graph, num_buses, size_bus, constraints)
             output_file = open(output_category_path + "/" + input_name + ".out", "w")
