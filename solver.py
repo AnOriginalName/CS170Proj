@@ -47,26 +47,64 @@ def weight_graph(graph):
     WGraph = nx.Graph()
     WGraph.add_nodes_from(graph.nodes)
     for edge in graph.edges:
-        WGraph.add_edge(edge[0],edge[1],capacity=1)
+        WGraph.add_edge(edge[0],edge[1],capacity=random.randint(1,101))
     return WGraph
 
 def get_min_cuts(graph,rowdy_list):
     for rowdys in rowdy_list:
-        s = rowdys[0]
-        t = rowdys[1]
+        i = random.randint(1,len(rowdys)-1)
+        s = rowdys[random.randint(0,i-1)]
+        t = rowdys[random.randint(i,len(rowdys)-1)]
         min_cut = nx.Graph()
         min_cut.add_nodes_from(graph.nodes)
         min_cut.add_edges_from(minimum_st_edge_cut(graph,s,t))
         
         graph.remove_edges_from(min_cut.edges)
+    a = 0
+    b = 0
+    max_len = 0
+    for kid in graph.nodes:
+        kids = nx.node_connected_component(graph,kid)
+        if len(kids) > max_len:
+            max_len = len(kids)
+        if len(kids) == 1:
+            a = kids.pop()
+        elif len(kids) < max_len:
+            b = kids.pop()
+    if a != 0: 
+        graph.add_edge(a,b)
     return graph
 
 
 def solve(graph, num_buses, size_bus, constraints):
     #TODO: Write this method as you like. We'd recommend changing the arguments here as well
     graph = weight_graph(graph)
-    return str(get_min_cuts(graph,constraints).edges)
-
+    graph = get_min_cuts(graph,constraints)
+    Set_Sol = set()
+    Sol = []
+    bus = []
+    for node in graph.nodes:
+        if node in Set_Sol:
+           continue
+        Set_Sol.add(node)
+        kids = nx.node_connected_component(graph,node)
+        print(kids)
+        bus += [node]
+        for kid in kids:
+            if kid in Set_Sol:
+                #print(kid)
+                #print(" Kid was already seen \n")
+                continue
+            bus += [kid]
+            Set_Sol.add(kid)
+            if len(bus) == size_bus:
+                Sol += [bus]
+                bus = []
+    Str_Sol = ""
+    for bus in Sol:
+        Str_Sol += str(bus) + "\n"
+    return Str_Sol
+        
 def main():
     '''
         Main method which iterates over all inputs and calls `solve` on each.
@@ -79,6 +117,8 @@ def main():
         os.mkdir(path_to_outputs)
 
     for size in size_categories:
+       # if size != "medium":
+        #    continue
         category_path = path_to_inputs + "/" + size
         output_category_path = path_to_outputs + "/" + size
         category_dir = os.fsencode(category_path)
@@ -88,14 +128,14 @@ def main():
 
         for input_folder in os.listdir(category_dir):
             input_name = os.fsdecode(input_folder)
-            if input_name == ".DS_Store" or input_name == "parameters.txt" or input_name == "graph.gml":
+            if input_name == ".DS_Store":
                 continue
-            print(input_name)
+            #print(input_name)
             
-            graph, num_buses, size_bus, constraints = parse_input(category_path + "/" + input_name)
+            graph, num_buses, size_bus, constraints = parse_input(category_path + "/") # + input_name)
             solution = solve(graph, num_buses, size_bus, constraints)
-            output_file = open(output_category_path + "/" + input_name + ".out", "w")
-
+            output_file = open(output_category_path + "/" + ".out", "w")
+            print(output_category_path + "/" + ".out")
             #TODO: modify this to write your solution to your 
             #      file properly as it might not be correct to 
             #      just write the variable solution to a file
