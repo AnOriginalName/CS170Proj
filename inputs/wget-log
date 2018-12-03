@@ -1,0 +1,6 @@
+--2018-12-02 23:43:58--  https://piazza.com/redirect/s3?bucket=uploads
+Resolving piazza.com (piazza.com)... 52.0.43.25, 52.55.184.84, 34.194.161.115, ...
+Connecting to piazza.com (piazza.com)|52.0.43.25|:443... connected.
+HTTP request sent, awaiting response... 400 Bad Request
+2018-12-02 23:43:58 ERROR 400: Bad Request.
+
