@@ -1,0 +1,5 @@
+#!/bin/bash
+for i in range {1..75}
+do 
+	mv "/home/ubuntu/CS170/outputs/all_large/$i/.out" "/home/ubuntu/CS170/outputs/all_large/$i/$i.out"
+done
