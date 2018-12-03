@@ -165,7 +165,7 @@ def main():
         if size != "all_large":
             continue
         temp = size
-        for i in range(1,100):
+        for i in range(11,20):
             size = temp + "/" + str(i)
             category_path = path_to_inputs + "/" + size
             output_category_path = path_to_outputs + "/" + size
