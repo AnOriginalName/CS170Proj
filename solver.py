@@ -88,21 +88,66 @@ def solve(graph, num_buses, size_bus, constraints):
            continue
         Set_Sol.add(node)
         kids = nx.node_connected_component(graph,node)
-        print(kids)
+        #print(kids)
+        #if node != 0:
+            #print(" : added " + node + "       \n")
+        #print("\n")    
         bus += [node]
+        if len(bus) == size_bus:
+            Sol += [bus]
+            bus = []
+            #print(Set_Sol)
         for kid in kids:
             if kid in Set_Sol:
                 #print(kid)
                 #print(" Kid was already seen \n")
                 continue
             bus += [kid]
+        #    print(bus)
+        #    if kid != 0:
+                #print(" : added " + kid + "       \n")
+            
             Set_Sol.add(kid)
             if len(bus) == size_bus:
                 Sol += [bus]
+         #       print("Bus:")
+          #      print( bus)
+           #     print("\n Solution")
+            #    print(Sol)
+             #   print("\n\n\n")
                 bus = []
-    Str_Sol = ""
+                 
+    #Set_Sol.remove(0)
+    #print(sorted(Set_Sol))
+    Orphans = Set_Sol.copy()
+    Partials = []
+    Sol2 = Sol.copy()
     for bus in Sol:
+        if len(bus) != size_bus:
+            Partials += [bus]
+            Sol2.remove(bus)
+        for node in Set_Sol:
+            if node in bus:
+                Orphans.remove(node)
+    n_bus = []
+    for node in Orphans:
+        #print(node)
+        #print("\n")
+        n_bus += [node]
+        #print(n_bus)
+        if len(n_bus) == size_bus:
+            Sol2 += [n_bus]
+            print("added new bus\n")
+            if len(Sol) == num_buses - len(Partials):
+                n_bus = Partials.pop(0)
+                print("Partial list added\n")
+            else:
+                n_bus = []
+    
+    Str_Sol = ""
+    for bus in Sol2:
         Str_Sol += str(bus) + "\n"
+    
     return Str_Sol
         
 def main():
@@ -112,37 +157,40 @@ def main():
         the portion which writes it to a file to make sure their output is
         formatted correctly.
     '''
-    size_categories = ["small", "medium", "large"]
+    size_categories = ["all_large","all_large","small", "medium", "large"]
     if not os.path.isdir(path_to_outputs):
         os.mkdir(path_to_outputs)
 
     for size in size_categories:
-       # if size != "medium":
-        #    continue
-        category_path = path_to_inputs + "/" + size
-        output_category_path = path_to_outputs + "/" + size
-        category_dir = os.fsencode(category_path)
+        if size != "all_large":
+            continue
+        temp = size
+        for i in range(1,100):
+            size = temp + "/" + str(i)
+            category_path = path_to_inputs + "/" + size
+            output_category_path = path_to_outputs + "/" + size
+            category_dir = os.fsencode(category_path)
         
-        if not os.path.isdir(output_category_path):
-            os.mkdir(output_category_path)
+            if not os.path.isdir(output_category_path):
+                os.mkdir(output_category_path)
 
-        for input_folder in os.listdir(category_dir):
-            input_name = os.fsdecode(input_folder)
-            if input_name == ".DS_Store":
-                continue
+            for input_folder in os.listdir(category_dir):
+                input_name = os.fsdecode(input_folder)
+                if input_name == ".DS_Store":
+                    continue
             #print(input_name)
             
-            graph, num_buses, size_bus, constraints = parse_input(category_path + "/") # + input_name)
-            solution = solve(graph, num_buses, size_bus, constraints)
-            output_file = open(output_category_path + "/" + ".out", "w")
-            print(output_category_path + "/" + ".out")
+                graph, num_buses, size_bus, constraints = parse_input(category_path + "/") # + input_name)
+                solution = solve(graph, num_buses, size_bus, constraints)
+                output_file = open(output_category_path + "/" + ".out", "w")
+                print(output_category_path + "/" + ".out")
             #TODO: modify this to write your solution to your 
             #      file properly as it might not be correct to 
             #      just write the variable solution to a file
-            output_file.write(solution)
+                output_file.write(solution)
 
-            output_file.close()
-
+                output_file.close()
+           
 if __name__ == '__main__':
     main()
 
